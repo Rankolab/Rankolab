@@ -1,1 +1,0 @@
-<!-- index.blade.php for Website Management -->

@@ -1,1 +1,0 @@
-<!-- show view for Blogs -->

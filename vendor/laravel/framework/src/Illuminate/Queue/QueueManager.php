@@ -37,6 +37,7 @@ class QueueManager implements FactoryContract, MonitorContract
      * Create a new queue manager instance.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @return void
      */
     public function __construct($app)
     {
@@ -159,8 +160,8 @@ class QueueManager implements FactoryContract, MonitorContract
         }
 
         return $this->getConnector($config['driver'])
-            ->connect($config)
-            ->setConnectionName($name);
+                        ->connect($config)
+                        ->setConnectionName($name);
     }
 
     /**
@@ -189,7 +190,7 @@ class QueueManager implements FactoryContract, MonitorContract
      */
     public function extend($driver, Closure $resolver)
     {
-        $this->addConnector($driver, $resolver);
+        return $this->addConnector($driver, $resolver);
     }
 
     /**
