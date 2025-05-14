@@ -4,6 +4,10 @@
  * Manages domain analysis, keyword research, and backlink analysis
  */
 
+// Include the DomainAnalysis model
+require_once __DIR__ . '/../models/DomainAnalysis.php';
+require_once __DIR__ . '/../models/User.php';
+
 // Get request method
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -20,6 +24,16 @@ array_shift($segments); // removes 'domain'
 // Get the action (analyze, keywords, backlinks)
 $action = $segments[0] ?? '';
 
+// Track API request (in a real app, we would save this to the database)
+$licenseKey = isset($_POST['licenseKey']) ? $_POST['licenseKey'] : null;
+if (!$licenseKey && isset($_SERVER['HTTP_X_API_KEY'])) {
+    $licenseKey = $_SERVER['HTTP_X_API_KEY'];
+}
+
+// For simplicity, we'll use a default user ID in this demo
+// In a real application, we would validate the license key and get the associated user
+$userId = 1;
+
 // Handle different HTTP methods and actions
 if ($method === 'POST' && $action === 'analyze') {
     // Handle domain analysis
@@ -35,7 +49,7 @@ if ($method === 'POST' && $action === 'analyze') {
         exit;
     }
     
-    handleDomainAnalysis($data);
+    handleDomainAnalysis($userId, $data);
 } 
 elseif ($method === 'GET' && $action === 'keywords') {
     // Handle keywords retrieval
@@ -78,9 +92,10 @@ else {
 /**
  * Handle domain analysis request
  * 
+ * @param int $userId The user ID
  * @param array $data The request data
  */
-function handleDomainAnalysis($data) {
+function handleDomainAnalysis($userId, $data) {
     // Validate input
     if (empty($data['domain'])) {
         http_response_code(400);
@@ -92,39 +107,13 @@ function handleDomainAnalysis($data) {
     }
     
     $domain = $data['domain'];
+    $includeCompetitors = isset($data['includeCompetitors']) ? (bool) $data['includeCompetitors'] : false;
     
-    // In a real application, we would analyze the domain using various SEO tools and APIs
-    // For demonstration, we'll return dummy analysis data
-    echo json_encode([
-        'success' => true,
-        'domain' => $domain,
-        'analysis' => [
-            'domainAuthority' => 45,
-            'pageAuthority' => 38,
-            'spamScore' => 2,
-            'performanceMetrics' => [
-                'loadTime' => '2.3s',
-                'mobileCompatibility' => 'Good',
-                'pagespeedScore' => 85
-            ],
-            'seoIssues' => [
-                'missingAltTags' => 12,
-                'brokenLinks' => 3,
-                'duplicateContent' => 2,
-                'missingMetaDescriptions' => 5
-            ],
-            'competitorComparison' => [
-                'competitorA.com' => [
-                    'domainAuthority' => 52,
-                    'commonKeywords' => 145
-                ],
-                'competitorB.com' => [
-                    'domainAuthority' => 38,
-                    'commonKeywords' => 98
-                ]
-            ]
-        ]
-    ]);
+    // Analyze the domain using the DomainAnalysis model
+    $result = DomainAnalysis::analyzeDomain($userId, $domain, $includeCompetitors);
+    
+    // Output the analysis result
+    echo json_encode($result);
 }
 
 /**
@@ -133,57 +122,11 @@ function handleDomainAnalysis($data) {
  * @param string $domain The domain to analyze
  */
 function handleKeywordsRetrieval($domain) {
-    // In a real application, we would retrieve keywords data from an SEO API
-    // For demonstration, we'll return dummy keyword data
-    echo json_encode([
-        'success' => true,
-        'domain' => $domain,
-        'keywords' => [
-            [
-                'keyword' => 'seo tools',
-                'position' => 12,
-                'searchVolume' => 5400,
-                'difficulty' => 68,
-                'cpc' => 4.20
-            ],
-            [
-                'keyword' => 'content optimization',
-                'position' => 8,
-                'searchVolume' => 2900,
-                'difficulty' => 54,
-                'cpc' => 3.80
-            ],
-            [
-                'keyword' => 'keyword research tool',
-                'position' => 15,
-                'searchVolume' => 8100,
-                'difficulty' => 72,
-                'cpc' => 5.10
-            ],
-            [
-                'keyword' => 'backlink analyzer',
-                'position' => 6,
-                'searchVolume' => 3200,
-                'difficulty' => 61,
-                'cpc' => 4.50
-            ],
-            [
-                'keyword' => 'domain authority checker',
-                'position' => 4,
-                'searchVolume' => 1800,
-                'difficulty' => 49,
-                'cpc' => 2.90
-            ]
-        ],
-        'topPerformingPage' => 'https://' . $domain . '/blog/seo-strategies-2023',
-        'suggestedKeywords' => [
-            'seo ranking factors',
-            'on-page optimization',
-            'technical seo guide',
-            'seo competitive analysis',
-            'local seo strategy'
-        ]
-    ]);
+    // Get keywords using the DomainAnalysis model
+    $result = DomainAnalysis::getKeywords($domain);
+    
+    // Output the keywords
+    echo json_encode($result);
 }
 
 /**
@@ -192,64 +135,9 @@ function handleKeywordsRetrieval($domain) {
  * @param string $domain The domain to analyze
  */
 function handleBacklinksRetrieval($domain) {
-    // In a real application, we would retrieve backlink data from an SEO API
-    // For demonstration, we'll return dummy backlink data
-    echo json_encode([
-        'success' => true,
-        'domain' => $domain,
-        'backlinksOverview' => [
-            'totalBacklinks' => 1832,
-            'uniqueDomains' => 246,
-            'dofollow' => 1254,
-            'nofollow' => 578,
-            'averageDomainAuthority' => 42
-        ],
-        'topBacklinks' => [
-            [
-                'source' => 'example-blog.com',
-                'targetUrl' => 'https://' . $domain . '/features',
-                'anchorText' => 'best SEO analysis tool',
-                'domainAuthority' => 68,
-                'dofollow' => true,
-                'firstSeen' => '2023-02-15'
-            ],
-            [
-                'source' => 'marketing-guide.com',
-                'targetUrl' => 'https://' . $domain . '/blog/content-optimization',
-                'anchorText' => 'content optimization techniques',
-                'domainAuthority' => 72,
-                'dofollow' => true,
-                'firstSeen' => '2023-03-22'
-            ],
-            [
-                'source' => 'digitalmarketer.org',
-                'targetUrl' => 'https://' . $domain,
-                'anchorText' => 'SEO platform',
-                'domainAuthority' => 65,
-                'dofollow' => false,
-                'firstSeen' => '2022-11-08'
-            ],
-            [
-                'source' => 'tech-reviews.net',
-                'targetUrl' => 'https://' . $domain . '/pricing',
-                'anchorText' => 'affordable SEO tools',
-                'domainAuthority' => 58,
-                'dofollow' => true,
-                'firstSeen' => '2023-01-30'
-            ],
-            [
-                'source' => 'webmaster-forums.com',
-                'targetUrl' => 'https://' . $domain . '/blog/backlink-strategies',
-                'anchorText' => 'click here',
-                'domainAuthority' => 61,
-                'dofollow' => false,
-                'firstSeen' => '2023-04-05'
-            ]
-        ],
-        'backlinksGrowth' => [
-            'lastMonth' => 87,
-            'last3Months' => 234,
-            'last6Months' => 512
-        ]
-    ]);
+    // Get backlinks using the DomainAnalysis model
+    $result = DomainAnalysis::getBacklinks($domain);
+    
+    // Output the backlinks
+    echo json_encode($result);
 }

@@ -4,6 +4,10 @@
  * Manages license validation, activation, and deactivation
  */
 
+// Include the License model
+require_once __DIR__ . '/../models/License.php';
+require_once __DIR__ . '/../models/User.php';
+
 // Get request method
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -19,6 +23,12 @@ array_shift($segments); // removes 'license'
 
 // Get the action (validate, activate, deactivate)
 $action = $segments[0] ?? '';
+
+// Track API request (in a real app, we would save this to the database)
+$licenseKey = isset($_POST['licenseKey']) ? $_POST['licenseKey'] : null;
+if (!$licenseKey && isset($_SERVER['HTTP_X_API_KEY'])) {
+    $licenseKey = $_SERVER['HTTP_X_API_KEY'];
+}
 
 // Only allow POST requests for license operations
 if ($method === 'POST') {
@@ -84,92 +94,11 @@ function handleLicenseValidation($data) {
     $licenseKey = $data['licenseKey'];
     $domain = $data['domain'] ?? '';
     
-    // In a real application, we would check the license against a database
-    // For demonstration, we'll validate a few hardcoded license keys
-    $validLicenses = [
-        'RANKO-PRO-1234-5678-9ABC' => [
-            'plan' => 'pro',
-            'status' => 'active',
-            'expiryDate' => '2023-12-31',
-            'maxDomains' => 10,
-            'activeDomains' => 3
-        ],
-        'RANKO-BUSINESS-2345-6789-ABCD' => [
-            'plan' => 'business',
-            'status' => 'active',
-            'expiryDate' => '2024-06-30',
-            'maxDomains' => 25,
-            'activeDomains' => 12
-        ],
-        'RANKO-ENTERPRISE-3456-7890-BCDE' => [
-            'plan' => 'enterprise',
-            'status' => 'active',
-            'expiryDate' => '2025-01-15',
-            'maxDomains' => 100,
-            'activeDomains' => 45
-        ],
-        'RANKO-PRO-EXPIRED-1234-5678' => [
-            'plan' => 'pro',
-            'status' => 'expired',
-            'expiryDate' => '2023-01-31',
-            'maxDomains' => 10,
-            'activeDomains' => 0
-        ]
-    ];
+    // Validate the license using the License model
+    $result = License::validate($licenseKey, $domain);
     
-    if (array_key_exists($licenseKey, $validLicenses)) {
-        $license = $validLicenses[$licenseKey];
-        
-        // Check if the license has expired
-        if ($license['status'] === 'expired') {
-            echo json_encode([
-                'success' => false,
-                'message' => 'This license key has expired.',
-                'licenseDetails' => [
-                    'licenseKey' => $licenseKey,
-                    'status' => 'expired',
-                    'expiryDate' => $license['expiryDate'],
-                    'renewalUrl' => 'https://rankolab.com/renew?key=' . urlencode($licenseKey)
-                ]
-            ]);
-            return;
-        }
-        
-        // Check if the domain is valid for this license
-        if (!empty($domain)) {
-            $domainStatus = checkDomainForLicense($licenseKey, $domain);
-            
-            echo json_encode([
-                'success' => true,
-                'licenseDetails' => [
-                    'licenseKey' => $licenseKey,
-                    'plan' => $license['plan'],
-                    'status' => $license['status'],
-                    'expiryDate' => $license['expiryDate'],
-                    'maxDomains' => $license['maxDomains'],
-                    'activeDomains' => $license['activeDomains'],
-                    'domainStatus' => $domainStatus
-                ]
-            ]);
-        } else {
-            echo json_encode([
-                'success' => true,
-                'licenseDetails' => [
-                    'licenseKey' => $licenseKey,
-                    'plan' => $license['plan'],
-                    'status' => $license['status'],
-                    'expiryDate' => $license['expiryDate'],
-                    'maxDomains' => $license['maxDomains'],
-                    'activeDomains' => $license['activeDomains']
-                ]
-            ]);
-        }
-    } else {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Invalid license key.'
-        ]);
-    }
+    // Output the validation result
+    echo json_encode($result);
 }
 
 /**
@@ -192,81 +121,11 @@ function handleLicenseActivation($data) {
     $domain = $data['domain'];
     $email = $data['email'] ?? '';
     
-    // In a real application, we would check and update the license in a database
-    // For demonstration, we'll validate a few hardcoded license keys
-    $validLicenses = [
-        'RANKO-PRO-1234-5678-9ABC' => [
-            'plan' => 'pro',
-            'status' => 'active',
-            'expiryDate' => '2023-12-31',
-            'maxDomains' => 10,
-            'activeDomains' => 3
-        ],
-        'RANKO-BUSINESS-2345-6789-ABCD' => [
-            'plan' => 'business',
-            'status' => 'active',
-            'expiryDate' => '2024-06-30',
-            'maxDomains' => 25,
-            'activeDomains' => 12
-        ],
-        'RANKO-ENTERPRISE-3456-7890-BCDE' => [
-            'plan' => 'enterprise',
-            'status' => 'active',
-            'expiryDate' => '2025-01-15',
-            'maxDomains' => 100,
-            'activeDomains' => 45
-        ],
-        'RANKO-PRO-EXPIRED-1234-5678' => [
-            'plan' => 'pro',
-            'status' => 'expired',
-            'expiryDate' => '2023-01-31',
-            'maxDomains' => 10,
-            'activeDomains' => 0
-        ]
-    ];
+    // Activate the license using the License model
+    $result = License::activate($licenseKey, $domain, $email);
     
-    if (!array_key_exists($licenseKey, $validLicenses)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Invalid license key.'
-        ]);
-        return;
-    }
-    
-    $license = $validLicenses[$licenseKey];
-    
-    // Check if the license has expired
-    if ($license['status'] === 'expired') {
-        echo json_encode([
-            'success' => false,
-            'message' => 'This license key has expired and cannot be activated.',
-            'renewalUrl' => 'https://rankolab.com/renew?key=' . urlencode($licenseKey)
-        ]);
-        return;
-    }
-    
-    // Check if max domains limit reached
-    if ($license['activeDomains'] >= $license['maxDomains']) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Maximum number of domains reached for this license. Please deactivate a domain or upgrade your plan.',
-            'upgradeUrl' => 'https://rankolab.com/upgrade?key=' . urlencode($licenseKey)
-        ]);
-        return;
-    }
-    
-    // Simulate activation
-    echo json_encode([
-        'success' => true,
-        'message' => 'License successfully activated for ' . $domain,
-        'activationDetails' => [
-            'licenseKey' => $licenseKey,
-            'domain' => $domain,
-            'activationDate' => date('Y-m-d'),
-            'activationId' => generateActivationId($licenseKey, $domain),
-            'expiryDate' => $license['expiryDate']
-        ]
-    ]);
+    // Output the activation result
+    echo json_encode($result);
 }
 
 /**
@@ -288,62 +147,9 @@ function handleLicenseDeactivation($data) {
     $licenseKey = $data['licenseKey'];
     $domain = $data['domain'];
     
-    // In a real application, we would update the license in the database
-    // For demonstration, we'll pretend to deactivate the domain
-    echo json_encode([
-        'success' => true,
-        'message' => 'License successfully deactivated for ' . $domain,
-        'deactivationDetails' => [
-            'licenseKey' => $licenseKey,
-            'domain' => $domain,
-            'deactivationDate' => date('Y-m-d')
-        ]
-    ]);
-}
-
-/**
- * Check if a domain is activated for a license
- * 
- * @param string $licenseKey The license key
- * @param string $domain The domain to check
- * @return string Domain status (active, inactive, pending)
- */
-function checkDomainForLicense($licenseKey, $domain) {
-    // In a real application, we would check this in a database
-    // For demonstration, we'll pretend some domains are active
-    $activeDomains = [
-        'RANKO-PRO-1234-5678-9ABC' => [
-            'example.com' => 'active',
-            'mysite.org' => 'active',
-            'blog.example.net' => 'active'
-        ],
-        'RANKO-BUSINESS-2345-6789-ABCD' => [
-            'business-site.com' => 'active',
-            'company.org' => 'active'
-        ],
-        'RANKO-ENTERPRISE-3456-7890-BCDE' => [
-            'enterprise.com' => 'active',
-            'corporate.org' => 'active',
-            'subsidiary.net' => 'active'
-        ]
-    ];
+    // Deactivate the license using the License model
+    $result = License::deactivate($licenseKey, $domain);
     
-    if (isset($activeDomains[$licenseKey]) && isset($activeDomains[$licenseKey][$domain])) {
-        return $activeDomains[$licenseKey][$domain];
-    }
-    
-    return 'inactive';
-}
-
-/**
- * Generate a unique activation ID
- * 
- * @param string $licenseKey The license key
- * @param string $domain The domain
- * @return string Unique activation ID
- */
-function generateActivationId($licenseKey, $domain) {
-    $dateCode = date('ymd');
-    $hash = substr(md5($licenseKey . $domain . $dateCode), 0, 10);
-    return 'ACT-' . $dateCode . '-' . $hash;
+    // Output the deactivation result
+    echo json_encode($result);
 }

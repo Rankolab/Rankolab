@@ -4,6 +4,10 @@
  * Manages content generation, plagiarism checking, and readability assessment
  */
 
+// Include the Content model
+require_once __DIR__ . '/../models/Content.php';
+require_once __DIR__ . '/../models/User.php';
+
 // Get request method
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -20,6 +24,12 @@ array_shift($segments); // removes 'content'
 // Get the action (generate, check-plagiarism, check-readability)
 $action = $segments[0] ?? '';
 
+// Track API request (in a real app, we would save this to the database)
+$licenseKey = isset($_POST['licenseKey']) ? $_POST['licenseKey'] : null;
+if (!$licenseKey && isset($_SERVER['HTTP_X_API_KEY'])) {
+    $licenseKey = $_SERVER['HTTP_X_API_KEY'];
+}
+
 if ($method === 'POST') {
     // Get JSON data from request body
     $json_data = file_get_contents('php://input');
@@ -34,21 +44,25 @@ if ($method === 'POST') {
         exit;
     }
     
+    // For simplicity, we'll use a default user ID in this demo
+    // In a real application, we would validate the license key and get the associated user
+    $userId = 1;
+    
     // Handle different actions
     switch ($action) {
         case 'generate':
             // Process content generation
-            handleContentGeneration($data);
+            handleContentGeneration($userId, $data);
             break;
             
         case 'check-plagiarism':
             // Process plagiarism checking
-            handlePlagiarismCheck($data);
+            handlePlagiarismCheck($userId, $data);
             break;
             
         case 'check-readability':
             // Process readability assessment
-            handleReadabilityCheck($data);
+            handleReadabilityCheck($userId, $data);
             break;
             
         default:
@@ -70,9 +84,10 @@ if ($method === 'POST') {
 /**
  * Handle content generation request
  * 
+ * @param int $userId The user ID
  * @param array $data The request data
  */
-function handleContentGeneration($data) {
+function handleContentGeneration($userId, $data) {
     // Validate input
     if (empty($data['topic']) || empty($data['keywords'])) {
         http_response_code(400);
@@ -83,9 +98,30 @@ function handleContentGeneration($data) {
         return;
     }
     
-    // In a real application, we would call a service or external API to generate content
-    // For demonstration, we'll return some dummy content
-    $generatedContent = generateContentForTopic($data['topic'], $data['keywords'], $data['wordCount'] ?? 500);
+    $topic = $data['topic'];
+    $keywords = $data['keywords'];
+    $wordCount = $data['wordCount'] ?? 500;
+    $toneOfVoice = $data['toneOfVoice'] ?? 'professional';
+    $targetAudience = $data['targetAudience'] ?? null;
+    
+    // Generate content using the Content model
+    $generatedContent = Content::generateContent($topic, $keywords, $wordCount, $toneOfVoice, $targetAudience);
+    
+    // Calculate keyword density
+    $keywordDensity = Content::calculateKeywordDensity($generatedContent, $keywords);
+    
+    // Save the generated content to the database
+    $readabilityScore = 75; // We'd normally calculate this
+    Content::create(
+        $userId,
+        $topic,
+        $keywords,
+        $wordCount,
+        $toneOfVoice,
+        $targetAudience,
+        $generatedContent,
+        $readabilityScore
+    );
     
     // Return the generated content
     echo json_encode([
@@ -93,8 +129,8 @@ function handleContentGeneration($data) {
         'content' => $generatedContent,
         'statistics' => [
             'wordCount' => str_word_count($generatedContent),
-            'readabilityScore' => 75, // Dummy score
-            'keywordDensity' => calculateKeywordDensity($generatedContent, $data['keywords'])
+            'readabilityScore' => $readabilityScore,
+            'keywordDensity' => $keywordDensity
         ]
     ]);
 }
@@ -102,9 +138,10 @@ function handleContentGeneration($data) {
 /**
  * Handle plagiarism check request
  * 
+ * @param int $userId The user ID
  * @param array $data The request data
  */
-function handlePlagiarismCheck($data) {
+function handlePlagiarismCheck($userId, $data) {
     // Validate input
     if (empty($data['content'])) {
         http_response_code(400);
@@ -115,32 +152,25 @@ function handlePlagiarismCheck($data) {
         return;
     }
     
-    // In a real application, we would call a plagiarism checking service
-    // For demonstration, we'll return dummy results
+    $content = $data['content'];
+    
+    // Check plagiarism using the Content model
+    $result = Content::checkPlagiarism($userId, $content);
+    
     echo json_encode([
         'success' => true,
-        'plagiarismScore' => 3.2, // Percentage of potentially plagiarized content
-        'matches' => [
-            [
-                'text' => substr($data['content'], 20, 40),
-                'source' => 'https://example.com/article1',
-                'matchPercentage' => 95
-            ],
-            [
-                'text' => substr($data['content'], 100, 40),
-                'source' => 'https://blog.example.com/seo-tips',
-                'matchPercentage' => 85
-            ]
-        ]
+        'plagiarismScore' => $result['plagiarismScore'],
+        'matches' => $result['matches']
     ]);
 }
 
 /**
  * Handle readability check request
  * 
+ * @param int $userId The user ID
  * @param array $data The request data
  */
-function handleReadabilityCheck($data) {
+function handleReadabilityCheck($userId, $data) {
     // Validate input
     if (empty($data['content'])) {
         http_response_code(400);
@@ -151,83 +181,14 @@ function handleReadabilityCheck($data) {
         return;
     }
     
-    // In a real application, we would analyze the text for readability
-    // For demonstration, we'll return dummy scores
+    $content = $data['content'];
+    
+    // Assess readability using the Content model
+    $result = Content::assessReadability($userId, $content);
+    
     echo json_encode([
         'success' => true,
-        'scores' => [
-            'fleschKincaid' => 68.5,
-            'smog' => 8.2,
-            'colemanLiau' => 10.1,
-            'automatedReadability' => 9.6,
-            'overallGrade' => 'B'
-        ],
-        'suggestions' => [
-            'Use shorter sentences in the third paragraph.',
-            'Consider simplifying vocabulary in the introduction.',
-            'Add more transition words between paragraphs.'
-        ]
+        'scores' => $result['scores'],
+        'suggestions' => $result['suggestions']
     ]);
-}
-
-/**
- * Generate content based on topic and keywords
- * 
- * @param string $topic The content topic
- * @param array|string $keywords Keywords to include
- * @param int $wordCount Target word count
- * @return string The generated content
- */
-function generateContentForTopic($topic, $keywords, $wordCount = 500) {
-    // Convert keywords to array if it's a string
-    if (is_string($keywords)) {
-        $keywords = explode(',', $keywords);
-        $keywords = array_map('trim', $keywords);
-    }
-    
-    // This is a dummy implementation - in a real app, this would call an AI service
-    $paragraphs = [
-        "The topic of {$topic} has been gaining significant attention in recent years. As businesses and individuals look to optimize their online presence, understanding the fundamental principles of {$topic} becomes crucial. With search engines constantly evolving their algorithms, staying updated with the latest trends is essential for success.",
-        
-        "When considering {$topic}, several key factors come into play. " . ucfirst($keywords[0] ?? "Research") . " shows that implementing strategic approaches can significantly improve results. " . ucfirst($keywords[1] ?? "Analysis") . " of market trends indicates a growing emphasis on user experience and content quality.",
-        
-        "Experts in the field recommend focusing on " . ($keywords[2] ?? "engagement") . " and " . ($keywords[3] ?? "optimization") . " to achieve optimal outcomes. By consistently applying best practices and monitoring performance metrics, organizations can enhance their {$topic} strategy and gain a competitive edge in the digital landscape.",
-        
-        "In conclusion, {$topic} remains a vital component of any comprehensive digital strategy. By leveraging the power of " . ($keywords[0] ?? "key principles") . " and implementing effective " . ($keywords[1] ?? "tactics") . ", businesses can achieve sustainable growth and improved visibility in an increasingly competitive online environment."
-    ];
-    
-    return implode("\n\n", $paragraphs);
-}
-
-/**
- * Calculate keyword density in content
- * 
- * @param string $content The content to analyze
- * @param array|string $keywords Keywords to check
- * @return array Keyword density information
- */
-function calculateKeywordDensity($content, $keywords) {
-    // Convert keywords to array if it's a string
-    if (is_string($keywords)) {
-        $keywords = explode(',', $keywords);
-        $keywords = array_map('trim', $keywords);
-    }
-    
-    $content = strtolower($content);
-    $wordCount = str_word_count($content);
-    
-    $result = [];
-    
-    foreach ($keywords as $keyword) {
-        $keyword = strtolower(trim($keyword));
-        $count = substr_count($content, $keyword);
-        $density = ($wordCount > 0) ? ($count / $wordCount) * 100 : 0;
-        
-        $result[$keyword] = [
-            'count' => $count,
-            'density' => round($density, 2)
-        ];
-    }
-    
-    return $result;
 }
