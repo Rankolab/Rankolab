@@ -1,0 +1,8 @@
+{
+    "require": {
+        "laravel/framework": "^12.14",
+        "laravel/tinker": "^2.10",
+        "laravel/sanctum": "^4.1",
+        "guzzlehttp/guzzle": "^7.9"
+    }
+}

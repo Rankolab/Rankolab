@@ -1,0 +1,1 @@
+<!-- show.blade.php view for Logs -->

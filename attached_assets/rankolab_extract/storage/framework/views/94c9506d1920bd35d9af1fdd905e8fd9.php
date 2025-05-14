@@ -1,0 +1,1 @@
+<!-- index.blade.php for Content Management --><?php /**PATH D:\xampp\htdocs\rankolab\api\rankolab_backend_with_admin\resources\views/admin/content/index.blade.php ENDPATH**/ ?>

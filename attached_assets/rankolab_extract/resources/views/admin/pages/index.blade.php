@@ -1,0 +1,1 @@
+<!-- index view for Pages -->
