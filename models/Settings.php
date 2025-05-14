@@ -96,6 +96,19 @@ class Settings {
     }
     
     /**
+     * Get all settings in a group with complete information
+     * 
+     * @param string $group The setting group
+     * @return array The settings with complete information
+     */
+    public static function getByGroup($group) {
+        return fetchAll(
+            "SELECT * FROM settings WHERE setting_group = :group ORDER BY setting_key",
+            ['group' => $group]
+        );
+    }
+    
+    /**
      * Get all settings
      * 
      * @param bool $publicOnly Whether to return only public settings
