@@ -117,4 +117,15 @@ class User {
         $result = fetchRow("SELECT COUNT(*) as count FROM users");
         return $result['count'];
     }
+    
+    /**
+     * Count the number of users by role
+     * 
+     * @param string $role The role to count
+     * @return int The number of users with the specified role
+     */
+    public static function countByRole($role) {
+        $result = fetchRow("SELECT COUNT(*) as count FROM users WHERE role = :role", ['role' => $role]);
+        return $result['count'];
+    }
 }

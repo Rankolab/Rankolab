@@ -374,6 +374,17 @@ class License {
     }
     
     /**
+     * Count the number of licenses by status
+     * 
+     * @param string $status The status to count
+     * @return int The number of licenses with the specified status
+     */
+    public static function countByStatus($status) {
+        $result = fetchRow("SELECT COUNT(*) as count FROM licenses WHERE status = :status", ['status' => $status]);
+        return $result['count'];
+    }
+    
+    /**
      * Generate a unique license key
      * 
      * @param string $plan The license plan
