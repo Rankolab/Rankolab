@@ -188,9 +188,15 @@
     <header>
         <div class="header-content">
             <h1>Rankolab Admin Dashboard</h1>
-            <div class="user-info">
-                <img src="https://via.placeholder.com/40" alt="Admin">
-                <span>Administrator</span>
+            <div style="display: flex; align-items: center;">
+                <div style="margin-right: 20px;">
+                    <a href="/" style="color: white; margin-right: 15px;">Home</a>
+                    <a href="/docs.php" style="color: white;">API Docs</a>
+                </div>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="Admin">
+                    <span>Administrator</span>
+                </div>
             </div>
         </div>
         <nav>

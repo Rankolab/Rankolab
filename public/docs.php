@@ -172,7 +172,8 @@
             <h1>Rankolab API Documentation</h1>
             <div>
                 <a href="/" style="color: white; margin-right: 15px;">Home</a>
-                <a href="/admin.php" style="color: white;">Admin Dashboard</a>
+                <a href="/admin.php" style="color: white; margin-right: 15px;">Admin Dashboard</a>
+                <a href="/api" style="color: white;">API Endpoints</a>
             </div>
         </div>
     </header>

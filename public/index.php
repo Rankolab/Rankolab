@@ -4,9 +4,6 @@
  * Simple API endpoint handler without Laravel
  */
 
-// Set content type to JSON
-header('Content-Type: application/json');
-
 // Parse URI path
 $request_uri = $_SERVER['REQUEST_URI'];
 $path = parse_url($request_uri, PHP_URL_PATH);
@@ -15,17 +12,16 @@ $segments = explode('/', $path);
 
 // Basic routing logic
 if (empty($segments[0]) || $segments[0] === 'index.php') {
-    // Home route
-    echo json_encode([
-        'name' => 'Rankolab API',
-        'version' => '1.0.0',
-        'status' => 'running'
-    ]);
+    // Redirect to welcome page for better user experience
+    header('Location: /welcome.php');
     exit;
 }
 
 // Handle API routes
 if ($segments[0] === 'api') {
+    // Set content type to JSON for API responses
+    header('Content-Type: application/json');
+    
     // Remove 'api' from segments
     array_shift($segments);
     
@@ -54,11 +50,16 @@ if ($segments[0] === 'api') {
         require $handler_file;
         exit;
     }
+    
+    // If no API handler found, return 404
+    http_response_code(404);
+    echo json_encode([
+        'error' => 'Not Found',
+        'message' => 'The requested API endpoint does not exist.'
+    ]);
+    exit;
 }
 
-// If no route matches, return 404
-http_response_code(404);
-echo json_encode([
-    'error' => 'Not Found',
-    'message' => 'The requested endpoint does not exist.'
-]);
+// For non-API requests that don't match any routes, redirect to docs
+header('Location: /docs.php');
+exit;
