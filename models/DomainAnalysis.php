@@ -540,42 +540,5 @@ class DomainAnalysis {
         return $result['count'];
     }
     
-    /**
-     * Get keywords for a domain analysis
-     * 
-     * @param int $domainId The domain analysis ID
-     * @return array The keywords data
-     */
-    public static function getKeywords($domainId) {
-        return fetchAll(
-            "SELECT * FROM domain_keywords WHERE domain_id = :domain_id ORDER BY position ASC",
-            ['domain_id' => $domainId]
-        );
-    }
-    
-    /**
-     * Get backlinks for a domain analysis
-     * 
-     * @param int $domainId The domain analysis ID
-     * @return array The backlinks data
-     */
-    public static function getBacklinks($domainId) {
-        return fetchAll(
-            "SELECT * FROM domain_backlinks WHERE domain_id = :domain_id ORDER BY domain_authority DESC",
-            ['domain_id' => $domainId]
-        );
-    }
-    
-    /**
-     * Get competitors for a domain analysis
-     * 
-     * @param int $domainId The domain analysis ID
-     * @return array The competitors data
-     */
-    public static function getCompetitors($domainId) {
-        return fetchAll(
-            "SELECT * FROM domain_competitors WHERE domain_id = :domain_id ORDER BY common_keywords DESC",
-            ['domain_id' => $domainId]
-        );
-    }
+    // These methods were moved elsewhere in the file to avoid duplication
 }
