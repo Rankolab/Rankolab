@@ -5,28 +5,28 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#EEF5FF',
-          100: '#D5E6FF',
-          200: '#B2CFFF',
-          300: '#85ADFF',
-          400: '#5D8BFC',
-          500: '#3B7FE7', // Main primary color
-          600: '#2862C5',
-          700: '#1A4CA3',
-          800: '#103A7A',
-          900: '#0A2650',
+          50: '#E6F0FF',
+          100: '#C0D6FF',
+          200: '#99BDFF',
+          300: '#73A3FF',
+          400: '#4D8AFF',
+          500: '#2670FE', // Main primary color - A vibrant blue
+          600: '#1F5AD1',
+          700: '#1745A5',
+          800: '#103078',
+          900: '#081A4C',
         },
         secondary: {
-          50: '#EBFFF8',
-          100: '#C9FFF0',
-          200: '#9AFFE0',
-          300: '#62F2D4',
-          400: '#35D8BA',
-          500: '#10B5A4', // Main secondary color
-          600: '#099183',
-          700: '#077069',
-          800: '#05504B',
-          900: '#033734',
+          50: '#F0FDF4',
+          100: '#DCFCE7',
+          200: '#BBF7D0',
+          300: '#86EFAC',
+          400: '#4ADE80',
+          500: '#22C55E', // Main secondary color - A bright green
+          600: '#16A34A',
+          700: '#15803D',
+          800: '#166534',
+          900: '#14532D',
         },
         accent: {
           50: '#F4F0FF',
