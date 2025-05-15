@@ -12,6 +12,11 @@
         <!-- End of Footer -->
     </div>
     <!-- End of Content Wrapper -->
+
+    <!-- Dark Mode Toggle Button -->
+    <div class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
     
     <script>
         // Sidebar toggle
@@ -54,17 +59,40 @@
                 }
             });
         });
-        
-        // Prevent form submission if validation fails
-        document.querySelectorAll('form').forEach(function(form) {
-            form.addEventListener('submit', function(e) {
+                // Prevent form submission if validation fails
+        document.querySelectorAll(\'form\').forEach(function(form) {
+            form.addEventListener(\'submit\', function(e) {
                 if (!this.checkValidity()) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
-                form.classList.add('was-validated');
+                form.classList.add(\'was-validated\');
             });
         });
-    </script>
-</body>
+
+        // Dark Mode Toggle Logic
+        const darkModeToggle = document.getElementById(\'darkModeToggle\');
+        const body = document.body;
+        const darkModeIcon = darkModeToggle.querySelector(\'i\');
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem(\'darkMode\') === \'enabled\') {
+            body.classList.add(\'dark-mode\');
+            darkModeIcon.classList.remove(\'fa-moon\');
+            darkModeIcon.classList.add(\'fa-sun\');
+        }
+
+        darkModeToggle.addEventListener(\'click\', () => {
+            body.classList.toggle(\'dark-mode\');
+            if (body.classList.contains(\'dark-mode\')) {
+                localStorage.setItem(\'darkMode\', \'enabled\');
+                darkModeIcon.classList.remove(\'fa-moon\');
+                darkModeIcon.classList.add(\'fa-sun\');
+            } else {
+                localStorage.setItem(\'darkMode\', \'disabled\');
+                darkModeIcon.classList.remove(\'fa-sun\');
+                darkModeIcon.classList.add(\'fa-moon\');
+            }
+        });
+    </script>dy>
 </html>
