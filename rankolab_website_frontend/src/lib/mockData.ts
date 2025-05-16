@@ -7,6 +7,51 @@ import {
 // Mock user data
 export const currentUser: User | null = null; // Initially not logged in
 
+// Blog data
+export interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  date: string;
+  readTime: string;
+  image: string;
+}
+
+export const blogs: BlogPost[] = [
+  {
+    id: '1',
+    title: 'Mastering SEO: A Complete Guide for 2025',
+    excerpt: 'Learn the latest SEO techniques and strategies to boost your website rankings.',
+    content: 'Full article content here...',
+    author: 'John Smith',
+    date: 'March 15, 2025',
+    readTime: '8 min read',
+    image: 'https://placekitten.com/800/400'
+  },
+  {
+    id: '2',
+    title: 'Content Creation Strategies That Work',
+    excerpt: 'Discover proven content creation methods that engage readers.',
+    content: 'Full article content here...',
+    author: 'Sarah Johnson',
+    date: 'March 10, 2025',
+    readTime: '6 min read',
+    image: 'https://placekitten.com/801/400'
+  },
+  {
+    id: '3',
+    title: 'The Future of AI in Digital Marketing',
+    excerpt: 'Explore how AI is transforming the digital marketing landscape.',
+    content: 'Full article content here...',
+    author: 'Mike Wilson',
+    date: 'March 5, 2025',
+    readTime: '10 min read',
+    image: 'https://placekitten.com/802/400'
+  }
+];
+
 // Features data
 export const features: Feature[] = [
   {
