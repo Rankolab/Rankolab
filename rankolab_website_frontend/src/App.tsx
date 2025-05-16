@@ -1,4 +1,12 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from './components/layout/Layout';
+import HomePage from './components/home/Hero';
+import DashboardPage from './components/dashboard/DashboardHeader';
+import LoginForm from './components/auth/LoginForm';
+import RegisterForm from './components/auth/RegisterForm';
+import ContentPlanner from './components/dashboard/ContentPlanner';
+import { AuthProvider } from './lib/authContext';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './lib/authContext';
 
