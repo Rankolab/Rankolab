@@ -21,6 +21,9 @@ import RegisterForm from './components/auth/RegisterForm';
 // Blog components
 import FeaturedPost from './components/blog/FeaturedPost';
 import BlogCard from './components/blog/BlogCard';
+import BlogDetail from './components/blog/BlogDetail';
+import BlogList from './components/blog/BlogList';
+import ContentPlanner from './components/dashboard/ContentPlanner';
 
 // Import mock data
 import { blogPosts } from './lib/mockData';
@@ -132,14 +135,15 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogDetailPage />} />
-          
+          <Route path="/dashboard/content-planner" element={<ContentPlanner />} />
+
           {/* Protected Routes */}
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardPage />
             </ProtectedRoute>
           } />
-          
+
           {/* 404 Route */}
           <Route path="*" element={
             <Layout>
