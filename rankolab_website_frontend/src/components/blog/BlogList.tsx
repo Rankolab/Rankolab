@@ -14,9 +14,7 @@ export default function BlogList() {
       <div className="py-12">
         <h1 className="text-3xl font-bold mb-8">Blog</h1>
         <FeaturedPost post={featuredPost} />
-        <div className="w-full h-[100px] bg-gray-100 flex items-center justify-center my-8" id="blog-list-top-ad">
-          Advertisement
-        </div>
+        <AdComponent adSlot="blog-list-top" style={{ display: 'block', marginTop: '2rem', marginBottom: '2rem' }} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           {regularPosts.map((post) => (
             <BlogCard key={post.id} post={post} />
