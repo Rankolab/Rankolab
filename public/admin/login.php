@@ -134,7 +134,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
-<body>
+<body class="<?php echo isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true' ? 'dark-mode' : ''; ?>">
+<button id="dark-mode-toggle" class="dark-mode-toggle">
+    <i class="fas fa-moon"></i>
+</button>
+<script>
+document.getElementById('dark-mode-toggle').addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    document.cookie = 'dark_mode=' + document.body.classList.contains('dark-mode') + ';path=/';
+});
+</script>
     <div class="login-container">
         <div class="logo-container">
             <div class="logo">Rankolab</div>
