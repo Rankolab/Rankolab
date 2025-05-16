@@ -14,11 +14,23 @@ function getDbConnection() {
     static $pdo = null;
     
     if ($pdo === null) {
-        $host = getenv('PGHOST');
-        $port = getenv('PGPORT');
-        $dbname = getenv('PGDATABASE');
-        $user = getenv('PGUSER');
-        $password = getenv('PGPASSWORD');
+        $database_url = getenv('DATABASE_URL');
+        if ($database_url) {
+            // Parse database URL
+            $params = parse_url($database_url);
+            $host = $params['host'];
+            $port = $params['port'];
+            $dbname = ltrim($params['path'], '/');
+            $user = $params['user'];
+            $password = $params['pass'];
+        } else {
+            // Fallback to individual vars
+            $host = getenv('PGHOST');
+            $port = getenv('PGPORT');
+            $dbname = getenv('PGDATABASE');
+            $user = getenv('PGUSER');
+            $password = getenv('PGPASSWORD');
+        }
         
         $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
         
