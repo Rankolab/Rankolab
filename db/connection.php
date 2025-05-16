@@ -1,8 +1,9 @@
+
 <?php
 /**
  * Database Connection
  * 
- * Establishes a connection to the PostgreSQL database using environment variables
+ * Establishes a connection to the SQLite database
  */
 
 /**
@@ -14,26 +15,40 @@ function getDbConnection() {
     static $pdo = null;
     
     if ($pdo === null) {
-        $host = getenv('PGHOST');
-        $port = getenv('PGPORT');
-        $dbname = getenv('PGDATABASE');
-        $user = getenv('PGUSER');
-        $password = getenv('PGPASSWORD');
+        $dbPath = __DIR__ . '/../database/database.sqlite';
+        $dsn = "sqlite:" . $dbPath;
         
-        if (!$host || !$port || !$dbname || !$user || !$password) {
-            throw new Exception('Database configuration missing. Please check your environment variables.');
+        // Create database file if it doesn't exist
+        if (!file_exists($dbPath)) {
+            touch($dbPath);
+            chmod($dbPath, 0644);
         }
         
-        $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
-        
         try {
-            $pdo = new PDO($dsn, $user, $password, [
+            $pdo = new PDO($dsn, null, null, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
+            
+            // Create users table if it doesn't exist
+            $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                role TEXT DEFAULT 'user',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+            
+            // Add default admin user if table is empty
+            $count = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+            if ($count == 0) {
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)");
+                $stmt->execute(['Administrator', 'admin@rankolab.com', password_hash('admin123', PASSWORD_DEFAULT), 'admin']);
+            }
         } catch (PDOException $e) {
-            // Log the error but don't expose sensitive information
             error_log('Database connection error: ' . $e->getMessage());
             throw new Exception('Database connection failed. Please check the configuration.');
         }
@@ -94,14 +109,14 @@ function insertRow($table, $data) {
     }, $columns);
     
     $sql = sprintf(
-        "INSERT INTO %s (%s) VALUES (%s) RETURNING id",
+        "INSERT INTO %s (%s) VALUES (%s)",
         $table,
         implode(', ', $columns),
         implode(', ', $placeholders)
     );
     
     $stmt = executeQuery($sql, $data);
-    return $stmt->fetchColumn();
+    return getDbConnection()->lastInsertId();
 }
 
 /**
