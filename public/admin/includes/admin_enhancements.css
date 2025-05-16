@@ -1,170 +1,209 @@
 /* Rankolab Admin Panel UI/UX Enhancements */
 
-/* General Body and Typography Improvements */
+:root {
+  --primary-color: #2670FE;
+  --primary-dark: #1F5AD1;
+  --primary-light: #4D8AFF;
+  --secondary-color: #22C55E;
+  --accent-color: #8256D0;
+  --success-color: #19B876;
+  --warning-color: #EAB308;
+  --error-color: #EF4444;
+  --background-light: #F9FAFB;
+  --background-dark: #111827;
+  --text-light: #6B7280;
+  --text-dark: #1F2937;
+}
+
+/* Dark Mode */
+[data-theme="dark"] {
+  --background-color: var(--background-dark);
+  --text-color: #E5E7EB;
+  --border-color: #374151;
+  --card-background: #1F2937;
+}
+
+/* Light Mode */
+[data-theme="light"] {
+  --background-color: var(--background-light);
+  --text-color: var(--text-dark);
+  --border-color: #E5E7EB;
+  --card-background: #FFFFFF;
+}
+
 body {
-    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f4f7fc; /* Lighter, cleaner background */
-    color: #333; /* Darker text for better contrast */
-    line-height: 1.6;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 /* Sidebar Enhancements */
 .sidebar {
-    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%); /* More modern, darker gradient */
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-brand {
-    background: rgba(0, 0, 0, 0.2); /* Slightly darker brand background */
-    padding: 0 1rem; /* Adjusted padding */
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
 }
 
-.sidebar-brand a img {
-    max-height: 40px; /* Ensure logo fits well */
-    margin-right: 10px;
-}
-
-.sidebar-brand span {
-    font-size: 1.1rem; /* Slightly smaller brand text if logo is prominent */
+.sidebar-brand img {
+  height: 40px;
+  width: auto;
+  margin-right: 0.75rem;
 }
 
 .nav-link {
-    padding: 0.85rem 1rem; /* Slightly increased padding for nav links */
-    color: rgba(255, 255, 255, 0.75);
+  padding: 0.85rem 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
 }
 
 .nav-link:hover, .nav-link.active {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid var(--secondary-color);
 }
 
-.nav-link.active {
-    font-weight: 700; /* Bolder active link */
-}
-
-.sidebar-heading {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.7rem;
-    padding: 0 1rem 0.5rem 1rem;
-}
-
-/* Content Area & Navbar Enhancements */
-.navbar {
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.page-title {
-    font-size: 1.75rem; /* Larger page titles */
-    font-weight: 700;
-    color: #2c3e50;
-}
-
-/* Card Enhancements */
+/* Content Area & Cards */
 .card {
-    border: 1px solid #e3e6f0;
-    border-radius: 0.5rem; /* Slightly more rounded corners */
-    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); /* Softer shadow */
-    margin-bottom: 1.75rem;
+  background-color: var(--card-background);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px -1px rgba(0, 0, 0, 0.15);
 }
 
 .card-header {
-    background-color: #f8f9fc;
-    border-bottom: 1px solid #e3e6f0;
-    padding: 0.9rem 1.25rem; /* Adjusted padding */
-    font-weight: 700;
-    color: #333;
+  background-color: transparent;
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
 }
 
-.card-body {
-    padding: 1.5rem; /* Increased padding in card body */
-}
-
-/* Stat Card Enhancements */
+/* Stats Cards */
 .stat-card {
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-}
-
-.stat-card-label {
-    font-size: 0.8rem;
-    font-weight: 700;
+  background: var(--card-background);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border-left: 4px solid var(--primary-color);
 }
 
 .stat-card-value {
-    font-size: 1.75rem;
-    font-weight: 700;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
 }
 
-/* Button Enhancements */
+.stat-card-label {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Buttons */
 .btn {
-    border-radius: 0.35rem;
-    padding: 0.5rem 1rem; /* Standardized padding */
-    font-weight: 600;
-    transition: all 0.2s ease-in-out;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
 .btn-primary {
-    background-color: #3498db; /* New primary color */
-    border-color: #3498db;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
+
 .btn-primary:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
 }
 
 .btn-success {
-    background-color: #2ecc71;
-    border-color: #2ecc71;
-}
-.btn-success:hover {
-    background-color: #27ae60;
-    border-color: #27ae60;
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
 }
 
-/* Table Enhancements */
-.table thead th {
-    background-color: #f2f4f6;
-    font-weight: 700;
-    color: #444;
+/* Tables */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
 }
 
-.table td, .table th {
-    padding: 0.9rem; /* Increased padding for table cells */
+.table th {
+  padding: 1rem;
+  font-weight: 600;
+  background-color: rgba(var(--primary-color), 0.05);
+  color: var(--text-color);
 }
 
-/* Dark Mode Toggle Placeholder - to be styled later */
+.table td {
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Forms */
+.form-control {
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  padding: 0.625rem 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(38, 112, 254, 0.1);
+}
+
+/* Dark Mode Toggle */
 .dark-mode-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px;
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 1001;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
 }
 
-
-
+.dark-mode-toggle:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.1);
+}
 
 /* Dark Mode Styles */
 body.dark-mode {
-    --primary-color-dark: #5a95f0; /* Slightly lighter primary for dark mode */
+    --primary-color-dark: #5a95f0;
     --secondary-color-dark: #a0a2b0;
     --success-color-dark: #2fdd90;
     --info-color-dark: #4bc8da;
     --warning-color-dark: #f7c950;
     --danger-color-dark: #e96052;
-    --light-color-dark: #3e4049; /* Darker light color for backgrounds */
-    --dark-color-dark: #e0e0e0;   /* Lighter dark color for text */
-    --white-color-dark: #2a2c33; /* Main background for cards, etc. */
-    --body-bg-dark: #1e1f24;    /* Overall page background */
+    --light-color-dark: #3e4049;
+    --dark-color-dark: #e0e0e0;
+    --white-color-dark: #2a2c33;
+    --body-bg-dark: #1e1f24;
     --border-color-dark: #4a4c55;
-    --shadow-dark: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.25); /* Darker shadow */
+    --shadow-dark: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.25);
 
     background-color: var(--body-bg-dark);
     color: var(--dark-color-dark);
@@ -185,7 +224,7 @@ body.dark-mode .sidebar-brand a {
 }
 
 body.dark-mode .nav-link {
-    color: rgba(224, 224, 224, 0.75); /* Lighter text for nav links in dark mode */
+    color: rgba(224, 224, 224, 0.75);
 }
 
 body.dark-mode .nav-link:hover, body.dark-mode .nav-link.active {
@@ -198,7 +237,7 @@ body.dark-mode .sidebar-heading {
 }
 
 body.dark-mode .navbar {
-    background-color: var(--white-color-dark); /* Dark background for navbar */
+    background-color: var(--white-color-dark);
     border-bottom: 1px solid var(--border-color-dark);
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
@@ -214,7 +253,7 @@ body.dark-mode .card {
 }
 
 body.dark-mode .card-header {
-    background-color: var(--light-color-dark); /* Slightly lighter than card body for header */
+    background-color: var(--light-color-dark);
     border-bottom: 1px solid var(--border-color-dark);
     color: var(--dark-color-dark);
 }
@@ -258,10 +297,10 @@ body.dark-mode .stat-card-value {
 body.dark-mode .btn-primary {
     background-color: var(--primary-color-dark);
     border-color: var(--primary-color-dark);
-    color: #fff; /* Ensure text is white on primary button */
+    color: #fff;
 }
 body.dark-mode .btn-primary:hover {
-    background-color: #4a85d0; /* Slightly lighter hover for dark mode */
+    background-color: #4a85d0;
     border-color: #4a85d0;
 }
 
@@ -294,7 +333,7 @@ body.dark-mode .table tbody tr:hover {
 }
 
 body.dark-mode .form-control {
-    background-color: var(--light-color-dark); /* Darker input fields */
+    background-color: var(--light-color-dark);
     color: var(--dark-color-dark);
     border: 1px solid var(--border-color-dark);
 }
@@ -349,5 +388,3 @@ body.dark-mode .chartjs-legend ul li {
 body.dark-mode .chart-container canvas {
     /* You might need specific Chart.js options for dark theme grid lines, ticks, etc. */
 }
-
-

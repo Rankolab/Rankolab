@@ -94,6 +94,37 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
         .sidebar-heading {
             padding: 0 1rem;
             font-weight: 600;
+
+<!-- Dark Mode Toggle -->
+<button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+    <i class="fas fa-moon"></i>
+</button>
+
+<script>
+    // Dark mode functionality
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+    const icon = darkModeToggle.querySelector('i');
+    
+    // Check for saved dark mode preference
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        body.setAttribute('data-theme', 'dark');
+        icon.classList.replace('fa-moon', 'fa-sun');
+    }
+    
+    darkModeToggle.addEventListener('click', () => {
+        if (body.getAttribute('data-theme') === 'dark') {
+            body.setAttribute('data-theme', 'light');
+            icon.classList.replace('fa-sun', 'fa-moon');
+            localStorage.setItem('darkMode', 'disabled');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            icon.classList.replace('fa-moon', 'fa-sun');
+            localStorage.setItem('darkMode', 'enabled');
+        }
+    });
+</script>
+
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.13rem;
