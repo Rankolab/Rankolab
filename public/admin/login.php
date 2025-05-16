@@ -1,7 +1,7 @@
 <?php
+session_start();
 // Include necessary model files
 require_once __DIR__ . '/../../models/User.php';
-session_start();
 
 // Redirect if already logged in
 if (isset($_SESSION['user_id']) && isset($_SESSION['admin_role'])) {
