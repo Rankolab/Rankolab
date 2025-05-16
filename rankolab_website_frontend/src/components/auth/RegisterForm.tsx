@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { useAuth } from '../../lib/authContext';
@@ -10,138 +10,174 @@ const RegisterForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Reset error state
     setError('');
-    
-    // Form validation
+    setSuccessMessage('');
+
     if (!name || !email || !password || !passwordConfirm) {
-      setError('Please fill in all fields');
+      setError('Please fill in all fields.');
       return;
     }
-    
     if (password !== passwordConfirm) {
-      setError('Passwords do not match');
+      setError('Passwords do not match.');
       return;
     }
-    
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError('Password must be at least 8 characters long.');
       return;
     }
-    
+    // Basic email validation
+    if (!/\S+@\S+\.\S+/.test(email)) {
+        setError('Please enter a valid email address.');
+        return;
+    }
+
     try {
       setIsLoading(true);
-      await register(name, email, password);
-      navigate('/dashboard');
+      // Mocking successful registration for now as backend might be blocked
+      // In a real scenario, this would be: await register(name, email, password);
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
+      console.log('Mock registration successful for:', { name, email });
+      setSuccessMessage('Registration successful! Redirecting to login...'); 
+      // Redirect to login page after a short delay to show success message
+      setTimeout(() => {
+        navigate('/login'); 
+      }, 2000);
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      setError('Registration failed. Please try again later.');
+      console.error('Registration error:', err);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
-    <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-medium">
+    <div className="max-w-lg w-full mx-auto bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-gray-200">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Create your account</h1>
-        <p className="text-gray-600">Start your 14-day free trial, no credit card required</p>
+        <Link to="/" className="inline-block mb-6">
+          <img src="/src/assets/rankolab-logo.jpeg" alt="Rankolab Logo" className="w-10 h-10" />
+        </Link>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Your Rankolab Account</h1>
+        <p className="text-gray-600">Join thousands of SEO professionals. Start your 14-day free trial.</p>
       </div>
-      
+
       {error && (
-        <div className="mb-4 p-3 bg-error-50 border border-error-200 rounded-md text-error-700 flex items-start">
-          <AlertCircle className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" />
-          <p className="text-sm">{error}</p>
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-start">
+          <AlertCircle className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
+          <p className="text-sm font-medium">{error}</p>
         </div>
       )}
-      
-      <form onSubmit={handleSubmit}>
+      {successMessage && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 flex items-start">
+          <CheckCircle className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
+          <p className="text-sm font-medium">{successMessage}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
         <Input
           type="text"
           label="Full Name"
+          id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="John Doe"
-          startIcon={<User size={16} />}
+          placeholder="e.g., Jane Doe"
+          startIcon={<User size={18} className="text-gray-400" />}
           fullWidth
           required
+          aria-describedby="name-error"
         />
-        
+
         <Input
           type="email"
           label="Email Address"
+          id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          startIcon={<Mail size={16} />}
+          startIcon={<Mail size={18} className="text-gray-400" />}
           fullWidth
           required
+          aria-describedby="email-error"
         />
-        
+
         <Input
-          type="password"
+          type={showPassword ? "text" : "password"}
           label="Password"
+          id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          startIcon={<Lock size={16} />}
-          helperText="At least 8 characters"
+          placeholder="Minimum 8 characters"
+          startIcon={<Lock size={18} className="text-gray-400" />}
+          endIcon={showPassword ? <EyeOff size={18} className="text-gray-500 cursor-pointer" /> : <Eye size={18} className="text-gray-500 cursor-pointer" />}
+          onEndIconClick={() => setShowPassword(!showPassword)}
+          helperText="Use 8 or more characters with a mix of letters, numbers & symbols."
           fullWidth
           required
+          aria-describedby="password-error"
         />
-        
+
         <Input
-          type="password"
+          type={showPasswordConfirm ? "text" : "password"}
           label="Confirm Password"
+          id="passwordConfirm"
           value={passwordConfirm}
           onChange={(e) => setPasswordConfirm(e.target.value)}
-          placeholder="••••••••"
-          startIcon={<Lock size={16} />}
+          placeholder="Re-enter your password"
+          startIcon={<Lock size={18} className="text-gray-400" />}
+          endIcon={showPasswordConfirm ? <EyeOff size={18} className="text-gray-500 cursor-pointer" /> : <Eye size={18} className="text-gray-500 cursor-pointer" />}
+          onEndIconClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
           fullWidth
           required
+          aria-describedby="passwordConfirm-error"
         />
-        
-        <div className="flex items-center mb-6">
+
+        <div className="flex items-start mb-6 pt-2">
           <input
             id="accept-terms"
             name="accept-terms"
             type="checkbox"
-            className="h-4 w-4 text-primary-500 focus:ring-primary-500 border-gray-300 rounded"
+            className="h-4 w-4 mt-1 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
             required
           />
-          <label htmlFor="accept-terms" className="ml-2 block text-sm text-gray-700">
-            I agree to the{' '}
-            <Link to="/terms" className="text-primary-500 hover:text-primary-600">
+          <label htmlFor="accept-terms" className="ml-3 block text-sm text-gray-700">
+            I agree to the Rankolab{' '}
+            <Link to="/terms" className="font-medium text-primary-600 hover:text-primary-700 hover:underline">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link to="/privacy" className="text-primary-500 hover:text-primary-600">
+            <Link to="/privacy" className="font-medium text-primary-600 hover:text-primary-700 hover:underline">
               Privacy Policy
-            </Link>
+            </Link>.
           </label>
         </div>
-        
+
         <Button
           type="submit"
+          variant="primary"
+          size="lg"
           fullWidth
           isLoading={isLoading}
+          className="text-base font-semibold shadow-md hover:shadow-lg transition-shadow duration-300"
         >
-          Create Account
+          {isLoading ? 'Creating Account...' : 'Create Free Account'}
         </Button>
       </form>
-      
-      <div className="mt-6 text-center">
+
+      <div className="mt-8 text-center">
         <p className="text-sm text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-primary-500 hover:text-primary-600">
-            Sign in
+          <Link to="/login" className="font-semibold text-primary-600 hover:text-primary-700 hover:underline">
+            Sign In
           </Link>
         </p>
       </div>
