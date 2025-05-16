@@ -4,6 +4,8 @@ import { ArrowRight } from 'lucide-react';
 import Container from '../ui/Container';
 import Button from '../ui/Button';
 
+import rankolabHeroDashboard from \'../../assets/rankolab-hero-dashboard.jpg\';
+
 const Hero: React.FC = () => {
   return (
     <section className="relative bg-gradient-to-b from-white to-gray-50 pt-24 pb-32">
@@ -68,7 +70,7 @@ const Hero: React.FC = () => {
             <div className="absolute inset-0 -m-6 bg-gradient-to-r from-primary-500/10 to-accent-500/10 rounded-xl blur-xl"></div>
             <div className="relative shadow-xl rounded-xl overflow-hidden border border-gray-200 bg-white">
               <img 
-                src="https://images.pexels.com/photos/7947941/pexels-photo-7947941.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+                src={rankolabHeroDashboard} 
                 alt="Rankolab Dashboard" 
                 className="w-full h-auto"
                 loading="lazy"
