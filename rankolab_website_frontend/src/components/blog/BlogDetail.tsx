@@ -54,8 +54,14 @@ export default function BlogDetail() {
           <span>{post.date}</span>
         </div>
 
+        <div className="w-full h-[100px] bg-gray-100 flex items-center justify-center mb-8" id="blog-detail-top-ad">
+          Advertisement
+        </div>
         <div className="prose prose-lg max-w-none">
           {post.content}
+        </div>
+        <div className="w-full h-[100px] bg-gray-100 flex items-center justify-center mt-8" id="blog-detail-bottom-ad">
+          Advertisement
         </div>
       </article>
     </Container>
