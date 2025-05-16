@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,20 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to Rankolab</title>
     <style>
+        :root {
+            --primary-color: #2670FE;
+            --primary-dark: #1F5AD1;
+            --primary-light: #4D8AFF;
+            --secondary-color: #22C55E;
+            --accent-color: #8256D0;
+            --background-light: #F9FAFB;
+            --text-dark: #1F2937;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: var(--background-light);
+            color: var(--text-dark);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
         header {
-            background-color: #343a40;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
             padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         .header-content {
             max-width: 1100px;
@@ -27,6 +39,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
         }
         h1 {
             margin: 0;
@@ -37,9 +59,10 @@
             text-decoration: none;
             margin-left: 20px;
             font-size: 16px;
+            transition: opacity 0.2s;
         }
         nav a:hover {
-            text-decoration: underline;
+            opacity: 0.8;
         }
         .main-content {
             flex-grow: 1;
@@ -54,11 +77,13 @@
             padding: 40px;
             margin-bottom: 40px;
             text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
         .hero h2 {
             font-size: 32px;
             margin-top: 0;
-            color: #343a40;
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
         .hero p {
             font-size: 18px;
@@ -67,23 +92,25 @@
         }
         .button {
             display: inline-block;
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: white;
             padding: 12px 24px;
             font-size: 16px;
-            border-radius: 4px;
+            border-radius: 6px;
             text-decoration: none;
             margin: 0 10px;
             transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
         }
         .button:hover {
-            background-color: #0069d9;
+            background-color: var(--primary-dark);
         }
         .button.secondary {
-            background-color: #6c757d;
+            background-color: var(--secondary-color);
         }
         .button.secondary:hover {
-            background-color: #5a6268;
+            background-color: #1ca04a;
         }
         .features {
             display: grid;
@@ -97,12 +124,13 @@
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
             text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
         .feature-card h3 {
             font-size: 20px;
             margin-top: 20px;
             margin-bottom: 15px;
-            color: #343a40;
+            color: var(--primary-color);
         }
         .feature-card p {
             color: #6c757d;
@@ -110,20 +138,24 @@
         }
         .feature-icon {
             font-size: 48px;
-            color: #007bff;
+            color: var(--primary-color);
         }
         footer {
-            background-color: #343a40;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
             padding: 20px 0;
             text-align: center;
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <h1>Rankolab</h1>
+            <div class="logo-container">
+                <img src="/rankolab-logo.jpeg" alt="Rankolab Logo" class="logo">
+                <h1>Rankolab</h1>
+            </div>
             <nav>
                 <a href="/">Home</a>
                 <a href="/docs.php">API Documentation</a>
@@ -160,19 +192,10 @@
                 <p>Easily validate, activate, and deactivate licenses for seamless integration with your applications.</p>
             </div>
         </div>
-
-        <div class="hero">
-            <h2>Getting Started</h2>
-            <p>To start using the Rankolab API, check out our comprehensive documentation and explore the admin dashboard.</p>
-            <div>
-                <a href="/api/content/generate" class="button">Generate Sample Content</a>
-                <a href="/api/domain/analyze" class="button secondary">Analyze Domain</a>
-            </div>
-        </div>
     </div>
 
     <footer>
-        <p>&copy; 2023 Rankolab. All rights reserved.</p>
+        <p>&copy; 2024 Rankolab. All rights reserved.</p>
     </footer>
 </body>
 </html>
