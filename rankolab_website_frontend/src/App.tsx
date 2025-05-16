@@ -74,6 +74,12 @@ const BlogPage = () => {
   );
 };
 
+const BlogDetailPage = () => (
+  <Layout>
+    <BlogDetail />
+  </Layout>
+);
+
 // Dashboard pages
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -125,6 +131,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogDetailPage />} />
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={
