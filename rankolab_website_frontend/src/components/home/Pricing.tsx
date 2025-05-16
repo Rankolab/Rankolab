@@ -21,85 +21,100 @@ const Pricing: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-white" id="pricing">
+    <section className="py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white" id="pricing">
       <Container>
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="text-sm font-semibold text-primary-600 uppercase tracking-wider">Pricing Plans</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-5">
             Simple, Transparent Pricing
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            Choose the plan that's right for you and start improving your SEO today.
+          <p className="text-lg text-gray-600 leading-relaxed">
+            Choose the plan that fits your needs and budget. All plans come with a 14-day free trial, no credit card required.
           </p>
-
-          {/* Billing toggle */}
-          <div className="flex items-center justify-center mb-8">
-            <span className={`text-sm font-medium ${billingPeriod === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
-              Monthly
-            </span>
-            <button
-              onClick={toggleBillingPeriod}
-              className="relative inline-flex items-center mx-4 h-6 w-12 rounded-full"
-              aria-pressed={billingPeriod === 'yearly'}
-            >
-              <span className="sr-only">Toggle billing period</span>
-              <span
-                className={`absolute h-6 w-12 rounded-full transition ${
-                  billingPeriod === 'yearly' ? 'bg-primary-500' : 'bg-gray-300'
-                }`}
-              />
-              <span
-                className={`absolute h-4 w-4 translate-x-1 transform rounded-full bg-white transition-transform ${
-                  billingPeriod === 'yearly' ? 'translate-x-7' : ''
-                }`}
-              />
-            </button>
-            <span className={`text-sm font-medium ${billingPeriod === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
-              Yearly <span className="text-success-600 font-semibold ml-1">Save 20%</span>
-            </span>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Billing toggle */}
+        <div className="flex items-center justify-center mb-12">
+          <span className={`text-base font-medium transition-colors duration-300 ${billingPeriod === "monthly" ? "text-gray-900" : "text-gray-500"}`}>
+            Monthly
+          </span>
+          <button
+            onClick={toggleBillingPeriod}
+            className="relative inline-flex items-center mx-4 h-7 w-14 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            aria-pressed={billingPeriod === "yearly"}
+          >
+            <span className="sr-only">Toggle billing period</span>
+            <span
+              className={`absolute h-full w-1/2 rounded-full transition-all duration-300 ease-in-out ${
+                billingPeriod === "yearly" ? "bg-primary-500 transform translate-x-full" : "bg-primary-500 transform translate-x-0"
+              }`}
+            />
+             <span
+                className={`absolute inset-0 flex items-center justify-center w-1/2 text-xs font-semibold transition-opacity duration-300 ${
+                  billingPeriod === "monthly" ? "text-white opacity-100" : "text-gray-600 opacity-0"
+                }`}
+              >
+                ON
+              </span>
+              <span
+                className={`absolute inset-0 flex items-center justify-center w-1/2 ml-auto text-xs font-semibold transition-opacity duration-300 ${
+                  billingPeriod === "yearly" ? "text-white opacity-100" : "text-gray-600 opacity-0"
+                }`}
+              >
+                OFF
+              </span>
+          </button>
+          <span className={`text-base font-medium transition-colors duration-300 ${billingPeriod === "yearly" ? "text-gray-900" : "text-gray-500"}`}>
+            Yearly <span className="text-green-600 font-semibold ml-1 px-2 py-0.5 bg-green-100 rounded-md">Save 20%</span>
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
           {pricingPlans.map((plan) => (
             <div
               key={plan.id}
-              className={`relative rounded-xl border ${
+              className={`relative rounded-2xl border flex flex-col ${
                 plan.mostPopular
-                  ? 'border-primary-200 shadow-primary'
-                  : 'border-gray-200 shadow-soft'
-              } bg-white overflow-hidden transition-all duration-300 hover:shadow-medium`}
+                  ? "border-primary-500 shadow-2xl shadow-primary-500/30 ring-2 ring-primary-500"
+                  : "border-gray-200 shadow-xl"
+              } bg-white overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]`}
             >
               {plan.mostPopular && (
-                <div className="absolute top-0 right-0 left-0 bg-primary-500 text-white text-xs font-bold py-1 text-center">
-                  MOST POPULAR
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary-500 text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-lg uppercase tracking-wider">
+                  Most Popular
                 </div>
               )}
-              <div className={`p-6 ${plan.mostPopular ? 'pt-8' : ''}`}>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
-                <div className="mt-6 mb-6">
-                  <span className="text-4xl font-bold text-gray-900">${getPrice(plan.price)}</span>
-                  <span className="text-gray-600 ml-2">
-                    {billingPeriod === 'monthly' ? '/month' : '/year'}
+              <div className={`p-8 flex-grow ${plan.mostPopular ? "pt-10" : "pt-8"}`}>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">{plan.name}</h3>
+                <p className="text-gray-500 text-sm mb-6 min-h-[40px]">{plan.description}</p>
+                <div className="my-8 text-center">
+                  <span className="text-5xl font-extrabold text-gray-900">${getPrice(plan.price)}</span>
+                  <span className="text-gray-500 ml-1">
+                    {billingPeriod === "monthly" ? "/mo" : "/yr"}
                   </span>
                 </div>
-                <Link to={`/register?plan=${plan.id}`}>
+                <Link to={`/register?plan=${plan.id}${billingPeriod === "yearly" ? "&billing=yearly" : ""}`}>
                   <Button
-                    variant={plan.mostPopular ? 'primary' : 'outline'}
+                    variant={plan.mostPopular ? "primary" : "outline"}
+                    size="lg"
                     fullWidth
+                    className="py-3 text-base font-semibold shadow-md hover:shadow-lg transition-shadow duration-300"
                   >
-                    {plan.id === 'free' ? 'Sign Up Free' : 'Start Free Trial'}
+                    {plan.id === "free" ? "Sign Up Free" : "Choose Plan"}
                   </Button>
                 </Link>
               </div>
-              <div className="border-t border-gray-100 p-6">
+              <div className="border-t border-gray-200 bg-gray-50/50 p-8">
+                <p className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider">What\s included:</p>
                 <ul className="space-y-3">
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="mr-2 mt-0.5 text-success-500">
-                        <Check size={16} className="flex-shrink-0" />
+                      <span className={`mr-3 mt-1 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${
+                        plan.mostPopular ? "bg-primary-500 text-white" : "bg-green-500 text-white"
+                      }`}>
+                        <Check size={14} />
                       </span>
-                      <span className="text-gray-700 text-sm">{feature}</span>
+                      <span className="text-gray-600 text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -108,20 +123,17 @@ const Pricing: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-16 text-center bg-gray-50 rounded-xl p-8 max-w-3xl mx-auto">
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">
-            Enterprise Solutions
+        <div className="mt-20 text-center bg-slate-100 rounded-xl p-10 max-w-4xl mx-auto shadow-lg border border-slate-200">
+          <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+            Need Something More?
           </h3>
-          <p className="text-gray-600 mb-6">
-            Need a custom solution for your large organization or agency? We offer tailored plans with dedicated support, custom integrations, and more.
+          <p className="text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed">
+            We offer custom enterprise solutions for large organizations and agencies. Get in touch for dedicated support, custom integrations, volume discounts, and more.
           </p>
           <Link to="/contact">
-            <Button variant="primary">Contact Sales</Button>
+            <Button variant="primary" size="lg" className="px-8 py-3 text-base font-semibold shadow-md hover:shadow-lg transition-shadow duration-300">Contact Sales</Button>
           </Link>
         </div>
       </Container>
     </section>
   );
-};
-
-export default Pricing;
